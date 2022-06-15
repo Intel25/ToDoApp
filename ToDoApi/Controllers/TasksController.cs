@@ -46,12 +46,42 @@ namespace ToDoApi.Controllers
         }
 
         [HttpPost]
-
         public async Task<IActionResult> Create(TaskModel taskToCreate)
         {
             await _dataContext.Tasks.AddAsync(taskToCreate);
             await _dataContext.SaveChangesAsync();
             return CreatedAtAction("GetById", new {taskToCreate.Id}, taskToCreate);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _dataContext.Tasks.FirstOrDefaultAsync(elem => elem.Id == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            _dataContext.Tasks.Remove(item);
+            await _dataContext.SaveChangesAsync();
+            return Ok(item);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, TaskModel taskUpdate)
+        {
+            var item = await _dataContext.Tasks.FirstOrDefaultAsync(elem => elem.Id == id);
+            
+            if (item == null)
+            {
+                return NotFound();
+            }
+            item.Description = taskUpdate.Description;
+            item.Name = taskUpdate.Name;
+            item.DeadLine = taskUpdate.DeadLine;
+            await _dataContext.SaveChangesAsync();
+
+            return Ok(item);
+        }
+
     }
 }
