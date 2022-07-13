@@ -19,13 +19,8 @@ namespace ToDoApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery]int count)
+        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery]int count = 10)
         {
-            if(page < 1 || count < 1)
-            {
-                return BadRequest();
-            }
-
             var tasksToReturn = await _dataContext.Tasks
                 .Skip((page - 1) * count)
                 .Take(count)
